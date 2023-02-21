@@ -33,3 +33,56 @@ int main() {
 	}
 	return 0;
 }
+------------------------------------------------------------------------------------------------------------------------------------------
+#include<stdio.h>
+#include<string.h>
+#include<malloc.h>
+typedef struct NODE {
+    char szData[64];
+
+    struct NODE* next;
+} NODE;
+
+NODE* p_head = NULL;
+
+void PrintNode(void) {
+    NODE* pHead = p_head;
+    while (pHead != NULL) {
+        printf("[%p] %s, next[%p]\n",pHead, pHead->szData,pHead->next);
+        pHead = pHead->next;
+    }
+
+    putchar('\n');
+}
+
+int InsertNewNode(char* pszData) {
+    NODE* pNode = (NODE*)malloc(sizeof(NODE));
+    memset(pNode, 0, sizeof(NODE));
+    strcpy_s(pNode->szData, sizeof(pNode->szData), pszData);
+
+    if (p_head == NULL)
+        p_head = pNode;
+    else{
+        pNode->next = p_head;
+        p_head = pNode;
+    }
+    return 1;
+}
+
+
+
+
+int main() {
+    //List 테스트를 위한 코드
+    InsertNewNode("Test01");
+    PrintNode();
+    InsertNewNode("Test02");
+    PrintNode();
+    InsertNewNode("Test03");
+    PrintNode();
+    return 0;
+}
+
+
+
+
