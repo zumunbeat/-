@@ -69,7 +69,16 @@ int InsertNewNode(char* pszData) {
     return 1;
 }
 
+void ReleaseList(void) {
+    NODE* pTmp = p_head;
+    while (pTmp != NULL) {
+        NODE* pDelete = pTmp;
+        pTmp = pTmp->next;
 
+        printf("Delete:[%p] %s\n", pDelete, pDelete->szData);
+        free(pDelete);
+    }
+}
 
 
 int main() {
