@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <string.h>
+#include <malloc.h>
+
+
+typedef struct NODE {
+    char* pszData;
+
+    struct NODE* prev;
+    struct NODE* next;
+} NODE;
+
+NODE* g_phead, g_ptail;
+int g_nSize;
+
+void InitList(void) {
+    g_phead = malloc(sizeof(NODE));
+}
+
+void ReleaseList(void) {
+
+}
+
+void PrintList(void) {
+
+}
+
+void InsetAtHead(void) {
+
+}
+
+void InsertAtTail(void) {
+
+}
+
+void FindNode(void) {
+
+}
+
+void DeleteNode(void) {
+
+}
+
+void GetSize(void) {
+
+}
+
+void GetLength(void) {
+    return GetSize();
+}
+
+int main(void) {
+    return 0;
+}
