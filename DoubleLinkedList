@@ -97,7 +97,11 @@ NODE* FindNode(const char* pszData) {
 
 int DeleteNode(const char* pszData){
     NODE* pNode = FindNode(pszData);
+    pNode->next->prev = pNode->prev;
+    pNode->prev->next = pNode->next;
     
+    free(pNode);
+    printf("DeleteNode():%p\n", pNode);
     return 0;
 }
 
@@ -119,12 +123,15 @@ int main(void) {
     InsertAtTail("Test02");
     InsertAtTail("Test03");
 
-    PrintList();
+    DeleteNode("Test01");
+    DeleteNode("Test02");
+    DeleteNode("Test03");
 
-    printf("FindNode():[%p]\n",FindNode("Test01"));
-    printf("FindNode():[%p]\n", FindNode("Test02"));
-    printf("FindNode():[%p]\n", FindNode("Test03"));
-        
+    InsertAtTail("Test01");
+    InsertAtTail("Test02");
+    InsertAtTail("Test03");
+
+    PrintList();
     ReleaseList();
 
     return 0;
