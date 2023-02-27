@@ -86,6 +86,12 @@ int InsertAtTail(const char *pszData) {
 }
 
 NODE* FindNode(const char* pszData) {
+    NODE* pTmp = g_phead->next;
+    while (pTmp != g_ptail) {
+        if (strcmp(pTmp->szData, pszData) == 0)
+            return pTmp;
+        pTmp = pTmp->next;
+    }
     return NULL;
 }
 
@@ -115,6 +121,10 @@ int main(void) {
 
     PrintList();
 
+    printf("FindNode():[%p]\n",FindNode("Test01"));
+    printf("FindNode():[%p]\n", FindNode("Test02"));
+    printf("FindNode():[%p]\n", FindNode("Test03"));
+        
     ReleaseList();
 
     return 0;
