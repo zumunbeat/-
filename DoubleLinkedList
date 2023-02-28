@@ -48,7 +48,7 @@ void PrintList(void) {
     printf("PrintList(): g_nSize:%d g_phead [%p], g_tail[%p]\n", g_nSize, g_phead, g_ptail);
     NODE* pTmp = g_phead;
     while (pTmp != NULL) {
-        printf("[%p] %s [%p]\n", pTmp->prev, pTmp->szData, pTmp->next);
+        printf("[%p] %p %s [%p]\n", pTmp->prev, pTmp, pTmp->szData, pTmp->next);
         pTmp = pTmp->next;
     }
 }
@@ -102,6 +102,7 @@ int DeleteNode(const char* pszData){
     
     free(pNode);
     printf("DeleteNode():%p\n", pNode);
+    g_nSize--;
     return 0;
 }
 
@@ -116,22 +117,41 @@ int GetLength(void) {
 int IsEmpty(void) {
     return GetSize();
 }
+
+int FindArr(NODE* pTmp,const char* pszData) {
+    *pTmp->szData = pszData;
+}
+int InsertAt(int idx,const char* pszData) {
+    int i = 0;
+    NODE* pTmp = g_phead->next;
+    while (pTmp != NULL) {
+        if (idx == i) {
+            FindArr(pTmp,pszData);
+            return 1;
+        }
+        else {
+            i++;
+            pTmp = pTmp->next;
+        }
+    }
+
+    return 0;
+}
+
+NODE* GetAt(int idx) {
+    return NULL;
+}
 int main(void) {
     InitList();
 
-    InsertAtTail("Test01");
-    InsertAtTail("Test02");
-    InsertAtTail("Test03");
+    InsertAtHead("Test01");
+    InsertAtHead("Test02");
+    InsertAtHead("Test03");
 
-    DeleteNode("Test01");
-    DeleteNode("Test02");
-    DeleteNode("Test03");
-
-    InsertAtTail("Test01");
-    InsertAtTail("Test02");
-    InsertAtTail("Test03");
-
+    InsertAt(0, "Test At 00");
     PrintList();
+
+
     ReleaseList();
 
     return 0;
