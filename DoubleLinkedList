@@ -4,7 +4,7 @@
 
 
 typedef struct NODE {
-    char szData[64];
+    char szData[64];    
 
     struct NODE* prev;
     struct NODE* next;
@@ -45,10 +45,16 @@ void ReleaseList(void) {
 }
 
 void PrintList(void) {
+    int i = 0;
     printf("PrintList(): g_nSize:%d g_phead [%p], g_tail[%p]\n", g_nSize, g_phead, g_ptail);
     NODE* pTmp = g_phead;
     while (pTmp != NULL) {
+        if(pTmp==g_phead||pTmp==g_ptail)
         printf("[%p] %p %s [%p]\n", pTmp->prev, pTmp, pTmp->szData, pTmp->next);
+        else {
+            printf("Index:%d [%p] %p, %s [%p]\n", i, pTmp->prev, pTmp, pTmp->szData, pTmp->next);
+            ++i;
+        }
         pTmp = pTmp->next;
     }
 }
@@ -56,12 +62,12 @@ void PrintList(void) {
 int InsertAtHead(const char *pszData) {
     NODE* pNewNode=malloc(sizeof(NODE));
     memset(pNewNode, 0, sizeof(NODE));
-
     strcpy_s(pNewNode->szData, sizeof(pNewNode->szData), pszData);
+
     pNewNode->next = g_phead->next;
     pNewNode->prev = g_phead;
 
-    g_phead->next = pNewNode;
+    g_phead->next = pNewNode;       
     pNewNode->next->prev = pNewNode;
 
     g_nSize++;
@@ -70,7 +76,8 @@ int InsertAtHead(const char *pszData) {
 }
 
 int InsertAtTail(const char *pszData) {
-    NODE* pNewNode = malloc(sizeof(NODE));
+    InsertBefore(g_ptail, pszData);
+    /*NODE* pNewNode = malloc(sizeof(NODE));
     memset(pNewNode, 0, sizeof(NODE));
 
     strcpy_s(pNewNode->szData, sizeof(pNewNode->szData), pszData);
@@ -81,7 +88,7 @@ int InsertAtTail(const char *pszData) {
     g_ptail->prev = pNewNode;
 
     g_nSize++;
-
+    */
     return g_nSize;
 }
 
@@ -118,27 +125,45 @@ int IsEmpty(void) {
     return GetSize();
 }
 
-int FindArr(NODE* pTmp,const char* pszData) {
-    *pTmp->szData = pszData;
+int InsertBefore(NODE* pTmp,const char* pszData) {
+     NODE* pNewNode = malloc(sizeof(NODE));
+     memset(pNewNode, 0, sizeof(NODE));
+     strcpy_s(pNewNode->szData, sizeof(pNewNode->szData), pszData);
+
+     pNewNode->prev = pTmp->prev;
+     pNewNode->next = pTmp; 
+
+     pTmp->prev = pNewNode;
+     pTmp->prev->next = pNewNode;
+
+     g_nSize++;
 }
 int InsertAt(int idx,const char* pszData) {
     int i = 0;
     NODE* pTmp = g_phead->next;
-    while (pTmp != NULL) {
-        if (idx == i) {
-            FindArr(pTmp,pszData);
-            return 1;
+    while (pTmp != g_ptail) {
+        if (i==idx) {
+            InsertBefore(pTmp,pszData);
+            return i;
         }
-        else {
-            i++;
+            ++i;
             pTmp = pTmp->next;
-        }
     }
 
-    return 0;
+    InsertAtTail(pszData);
+    return i;
 }
 
 NODE* GetAt(int idx) {
+    int i = 0;
+    NODE* pTmp = g_phead->next;
+    while (pTmp != g_ptail) {
+        if (i == idx)
+            return pTmp;
+        
+        pTmp = pTmp->next;
+        ++i;
+    }
     return NULL;
 }
 int main(void) {
@@ -147,12 +172,56 @@ int main(void) {
     InsertAtHead("Test01");
     InsertAtHead("Test02");
     InsertAtHead("Test03");
+    PrintList();
 
     InsertAt(0, "Test At 00");
     PrintList();
+    
+    InsertAt(2, "Test At 02");
+    PrintList();
 
+    InsertAt(4,"Test At 04");
+    PrintList();
 
+    InsertAt(10, "Test At 10");
+    PrintList();
+    
+    NODE* pNode = GetAt(0);
+    if (pNode) {
+        printf("GetAt(%d):%s\n", 0, pNode->szData);
+    }
+    else
+        printf("GetAt(%d):%s\n", 0, "Not Found");
+
+    pNode = GetAt(3);
+    if (pNode) {
+        printf("GetAt(%d):%s\n", 3, pNode->szData);
+    }
+    else
+        printf("GetAt(%d):%s\n", 3, "Not Found");
+
+    pNode = GetAt(6);
+    if (pNode) {
+        printf("GetAt(%d):%s\n", 6, pNode->szData);
+    }
+    else
+        printf("GetAt(%d):%s\n", 6, "Not Found");
+
+    pNode = GetAt(3);
+    if (pNode) {
+        printf("GetAt(%d):%s\n", 3, pNode->szData);
+    }
+    else
+        printf("GetAt(%d):%s\n", 3, "Not Found");
+ 
+    pNode = GetAt(7);
+    if (pNode) {
+        printf("GetAt(%d):%s\n", 7, pNode->szData);
+    }
+    else
+        printf("GetAt(%d):%s\n", 7, "Not Found");
+
+    PrintList();
     ReleaseList();
-
     return 0;
 }
