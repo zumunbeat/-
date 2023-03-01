@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <string.h>
+#include <malloc.h>
+
+
+typedef struct NODE {
+    char szData[64];
+
+    struct NODE* left;
+    struct NODE* right;
+} NODE;
+
+NODE* g_Root; //Tree의 최상단
+int g_nSize;
+
+void ReleaseTree(void) {
+    /*NODE* pTmp = g_phead;
+    while (pTmp != NULL) {
+        NODE* pDelete = pTmp;
+        pTmp = pTmp->next;
+
+        printf("free(%p)\n", pDelete);
+        free(pDelete);
+    }
+
+    g_phead = NULL;
+    g_ptail = NULL;
+    g_nSize = 0;*/
+    puts("ReleaseTree()");
+}
+
+void PrintTree(void) {
+    //printf("PrintList(): g_nSize:%d g_phead [%p], g_tail[%p]\n", g_nSize, g_phead, g_ptail);
+    //NODE* pTmp = g_phead;
+    //while (pTmp != NULL) {
+    //    printf("[%p] %p %s [%p]\n", pTmp->prev, pTmp, pTmp->szData, pTmp->next);
+    //    pTmp = pTmp->next;
+    //}
+}
+
+int InsertNode(const char* pszData) {
+    NODE* pnewNode = (NODE*)malloc(sizeof(NODE));
+    memset(pnewNode, 0, sizeof(NODE));
+    strcpy(pnewNode->szData, sizof(pnewNode->szData, pszData));
+    if (g_Root == NULL) {
+        g_Root = pnewNode;
+        return 1;
+    }
+    NODE* pTmp = g_Root;
+    //비교해서 L,R을 설정해줘야함.
+    if ((strcmp(pTmp->szData, pnewNode->szData) == 0) < 0) {
+        //left
+        if ((pTmp->left) == NULL)
+             pTmp->left = pnewNode;
+        else {
+            //다시 반복
+        }
+    }
+    else {
+        //Right
+        if ((pTmp->right) == NULL)
+             pTmp->right = pnewNode;
+        else {
+            //다시 반복
+        }
+        
+    }
+    
+    return 0;
+}
+
+NODE* FindNode(const char* pszData) {
+    //NODE* pTmp = g_phead->next;
+    //while (pTmp != g_ptail) {
+    //    if (strcmp(pTmp->szData, pszData) == 0)
+    //        return pTmp;
+    //    pTmp = pTmp->next;
+    //}
+    return NULL;
+}
+
+int DeleteNode(const char* pszData) {
+    //차후에 구현
+    return 0;
+}
+
+int GetSize(void) {
+    return g_nSize;
+}
+
+int GetLength(void) {
+    return GetSize();
+}
+
+int IsEmpty(void) {
+    return GetSize();
+}
+
+NODE* GetAt(int idx) {
+    return NULL;
+}
+int main(void) {
+    InsertNode("4번항목");
+    InsertNode("5번항목");
+    InsertNode("7번항목");
+    InsertNode("6번항목");
+    InsertNode("8번항목");
+    return 0;
+}
