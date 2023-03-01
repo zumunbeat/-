@@ -13,74 +13,126 @@ typedef struct NODE {
 NODE* g_Root; //Tree의 최상단
 int g_nSize;
 
-void ReleaseTree(void) {
-    /*NODE* pTmp = g_phead;
-    while (pTmp != NULL) {
-        NODE* pDelete = pTmp;
-        pTmp = pTmp->next;
+void ReleaseTree(NODE* pParent) {
+    if (pParent == NULL)
+        return;
+    
+    ReleaseTree(pParent->left);
+    ReleaseTree(pParent->right);
+    printf("FREE():%p, %s\n", pParent, pParent->szData);
+    free(pParent);
+    //재귀호출을 통해 알아서 정렬해줌
+    g_Root = NULL;//얘는 계속 초기화돼서 쓸데없긴함
 
-        printf("free(%p)\n", pDelete);
-        free(pDelete);
-    }
-
-    g_phead = NULL;
-    g_ptail = NULL;
-    g_nSize = 0;*/
-    puts("ReleaseTree()");
 }
 
-void PrintTree(void) {
-    //printf("PrintList(): g_nSize:%d g_phead [%p], g_tail[%p]\n", g_nSize, g_phead, g_ptail);
-    //NODE* pTmp = g_phead;
-    //while (pTmp != NULL) {
-    //    printf("[%p] %p %s [%p]\n", pTmp->prev, pTmp, pTmp->szData, pTmp->next);
-    //    pTmp = pTmp->next;
-    //}
+void PrintTree(NODE* pParent) {
+    if (pParent == NULL)
+        return;
+
+    PrintTree(pParent->left);
+    printf("[%p] %p, %s [%p]\n", pParent->left, pParent, pParent->szData, pParent->right);
+    PrintTree(pParent->right); 
+    //재귀호출을 통해 알아서 정렬해줌
+
+    return;
 }
 
 int InsertNode(const char* pszData) {
     NODE* pnewNode = (NODE*)malloc(sizeof(NODE));
     memset(pnewNode, 0, sizeof(NODE));
-    strcpy(pnewNode->szData, sizof(pnewNode->szData, pszData));
+    strcpy_s(pnewNode->szData, sizeof(pnewNode->szData), pszData);
     if (g_Root == NULL) {
         g_Root = pnewNode;
         return 1;
     }
     NODE* pTmp = g_Root;
-    //비교해서 L,R을 설정해줘야함.
-    if ((strcmp(pTmp->szData, pnewNode->szData) == 0) < 0) {
-        //left
-        if ((pTmp->left) == NULL)
-             pTmp->left = pnewNode;
-        else {
-            //다시 반복
-        }
-    }
-    else {
-        //Right
-        if ((pTmp->right) == NULL)
-             pTmp->right = pnewNode;
-        else {
-            //다시 반복
+    while (pTmp != NULL) {
+        //비교해서 L,R을 설정해줘야함.
+        if ((strcmp(pTmp->szData, pnewNode->szData) > 0)){
+            //left
+
+            if ((pTmp->left) == NULL) {
+                pTmp->left = pnewNode;
+                    break;
+            }
+            else {
+                pTmp = pTmp->left;
+                    continue;
+            }
         }
         
+        else {
+            //Right
+            if ((pTmp->right) == NULL) {
+                pTmp->right = pnewNode;
+                break;
+            }
+            else {
+                pTmp = pTmp->right;
+                continue;
+            }
+
+        }
     }
-    
-    return 0;
+    return 1;
+    //입력 값이 이미 존재하는 경우는 생각하지 않았음.
 }
 
-NODE* FindNode(const char* pszData) {
-    //NODE* pTmp = g_phead->next;
-    //while (pTmp != g_ptail) {
-    //    if (strcmp(pTmp->szData, pszData) == 0)
-    //        return pTmp;
-    //    pTmp = pTmp->next;
-    //}
+NODE* FindNode(const char*pszData) {
+    NODE* pTmp = g_Root;
+    while (pTmp != NULL) {
+        //비교해봐서 같으면 주소를 반환하고 아니라면 L,R을 판명해서 보내라.
+        if ((strcmp(pTmp->szData, pszData) == 0)) {
+            return pTmp;
+        }
+        else if((strcmp(pTmp->szData, pszData) > 0)) {
+            //left
+
+            if ((pTmp->left) == NULL) {
+                return NULL;
+            }
+            else {
+                pTmp = pTmp->left;
+                continue;
+            }
+        }
+
+        else {
+            //Right
+            if ((pTmp->right) == NULL) {
+                return NULL;
+            }
+            else {
+                pTmp = pTmp->right;
+                continue;
+            }
+
+        }
+    }
+
+
     return NULL;
 }
 
 int DeleteNode(const char* pszData) {
-    //차후에 구현
+    NODE* pnewNode = FindNode(pszData);
+    if (pnewNode == NULL)
+        return 0;
+    while(pnewNode != NULL){
+        if (pnewNode->left != NULL){
+            strcpy_s(pnewNode->szData, sizeof(pnewNode->szData), pnewNode->left->szData);
+            pnewNode = pnewNode->left;
+            continue;
+        }
+        else if(pnewNode->right != NULL){
+            strcpy_s(pnewNode->szData, sizeof(pnewNode->szData), pnewNode->right->szData);
+            pnewNode = pnewNode->right;
+            continue;
+        }
+    }
+    free(pnewNode);
+    
     return 0;
 }
 
@@ -100,10 +152,17 @@ NODE* GetAt(int idx) {
     return NULL;
 }
 int main(void) {
-    InsertNode("4번항목");
     InsertNode("5번항목");
+    InsertNode("4번항목");
     InsertNode("7번항목");
     InsertNode("6번항목");
     InsertNode("8번항목");
+    
+    PrintTree(g_Root);
+    printf("FindNode():%p\n", FindNode("5번항목"));
+    DeleteNode("6번항목");
+    PrintTree(g_Root);
+    ReleaseTree(g_Root);
     return 0;
+
 }
