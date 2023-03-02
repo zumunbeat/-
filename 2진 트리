@@ -11,6 +11,7 @@ typedef struct NODE {
 } NODE;
 
 NODE* g_Root; //Tree의 최상단
+NODE* pParent = NULL;
 int g_nSize;
 
 void ReleaseTree(NODE* pParent) {
@@ -81,6 +82,7 @@ int InsertNode(const char* pszData) {
 
 NODE* FindNode(const char*pszData) {
     NODE* pTmp = g_Root;
+    NODE* pParent = NULL;
     while (pTmp != NULL) {
         //비교해봐서 같으면 주소를 반환하고 아니라면 L,R을 판명해서 보내라.
         if ((strcmp(pTmp->szData, pszData) == 0)) {
@@ -93,6 +95,7 @@ NODE* FindNode(const char*pszData) {
                 return NULL;
             }
             else {
+                pParent = pTmp;
                 pTmp = pTmp->left;
                 continue;
             }
@@ -104,6 +107,7 @@ NODE* FindNode(const char*pszData) {
                 return NULL;
             }
             else {
+                pParent = pTmp;
                 pTmp = pTmp->right;
                 continue;
             }
@@ -116,23 +120,39 @@ NODE* FindNode(const char*pszData) {
 }
 
 int DeleteNode(const char* pszData) {
-    NODE* pnewNode = FindNode(pszData);
-    if (pnewNode == NULL)
-        return 0;
-    while(pnewNode != NULL){
-        if (pnewNode->left != NULL){
-            strcpy_s(pnewNode->szData, sizeof(pnewNode->szData), pnewNode->left->szData);
-            pnewNode = pnewNode->left;
-            continue;
+    if (g_Root = NULL) {
+        return NULL;
+    }
+    NODE *pTmp= FindNode(pszData);
+    while (pTmp != NULL)
+        //노드의 자식이 없는 경우
+        if ((pTmp->left == NULL) && (pTmp->right != NULL)) {
+            pTmp = pTmp->right;
+            while (pTmp->left != NULL) {
+                pTmp = pTmp->left;
+            }
+            psub = pTmp, psub->left = pTmp->left, psub->right = pTmp->right;
+            pTmp = pChange, pTmp->left = pChange, pTmp->right = pChange->right;
+            pTmp = psub, pTmp->left = psub->left, pTmp->right = pTmp->right;
         }
-        else if(pnewNode->right != NULL){
-            strcpy_s(pnewNode->szData, sizeof(pnewNode->szData), pnewNode->right->szData);
-            pnewNode = pnewNode->right;
-            continue;
+        //노드의 오른쪽 자식만 있는 경우
+        else if (pTmp->left != NULL) {
+            pTmp = pTmp->left;
+            while (pTmp->right != NULL) {
+                pTmp = pTmp->right;
+            }
+            psub = pTmp, psub->left = pTmp->left, psub->right = pTmp->right;
+            pTmp = pChange, pTmp->left = pChange, pTmp->right = pChange->right;
+            pTmp = psub, pTmp->left = psub->left, pTmp->right = pTmp->right;
+        }
+        //노드의 왼쪽 자식만 있는 경우
+        else {
+            psub = NULL;
+            pChange = NULL;
+            break;
         }
     }
-    free(pnewNode);
-    
+    free(psub), free(pChange), free(pTmp);
     return 0;
 }
 
